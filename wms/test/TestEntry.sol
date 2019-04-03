@@ -1,13 +1,19 @@
 pragma solidity ^0.5.0;
 
 import 'truffle/Assert.sol';
-import 'truffle/DeployedAdresses.sol';
+import 'truffle/DeployedAddresses.sol';
 import '../contracts/Entry.sol';
 
 contract TestEntry {
     Entry entry = Entry(DeployedAddresses.Entry());
     uint whId = 7;
     address expectedItem = address(this);
+
+    function beforeAll() {
+        for (uint i = 0; i < 10; i++) {
+            entry.createWarehouse(30, 'Some street');
+        }
+    }
 
     function testWhCanGetEntry() public {
         uint retId = entry.addNew(whId);
@@ -22,8 +28,8 @@ contract TestEntry {
     }
 
     function testGetWhAddressByItemId() public {
-        address[16] memory items = entry.getItems();
-        Assert.equal(items[wdId], expectedItem,
+        address[16] memory items = entry.getWarehouses();
+        Assert.equal(items[whId], expectedItem,
                      'Item do armazem deveria ser o mesmo deste contrato');
     }
 }
