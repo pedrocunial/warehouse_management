@@ -4,37 +4,47 @@ contract Entry {
 
     struct Warehouse {
         uint maxCapacity;
-        string address_;
+        uint itemsCount;
         address[] items;
     }
 
     // id -> struct
-    mapping(address => Warehouse) warehouses;
+    mapping(uint => Warehouse) warehouses;
 
-    function createWarehouse(uint whId, uint maxCapacity, string address_)
+    function createWarehouse(
+            uint whId,
+            uint maxCapacity,
+            bool forceRecreate
+        )
+        public
         returns (uint)
     {
-        warehouses[whId] = Warehouse(maxCapacity, address_, new uint[]());
+        require(warehouses[whId].maxCapacity == 0 || forceRecreate);
+
+        warehouses[whId] = Warehouse(maxCapacity, 0,
+                                     new address[](maxCapacity));
+        return whId;
     }
 
-    function addNew(address whId) public returns (uint) {
-        require(whId >= 0);
-
+    function addItem(uint whId) public returns (address) {
         Warehouse storage warehouse = warehouses[whId];
         require(warehouse.maxCapacity > 0 &&
-                warehouse.items.length < warehouse.maxCapacity);
+                warehouse.itemsCount < warehouse.maxCapacity);
 
-        warehouse.items.push(msg.sender);
-        return warehouse.items.length - 1;
+        warehouse.items[warehouse.itemsCount] = msg.sender;
+        warehouse.itemsCount++;
+        return warehouse.items[warehouse.itemsCount - 1];
     }
 
-    function getWarehouseItems(address whId)
+    function getWarehouseItems(uint whId)
         public
         view
         returns (address[] memory)
     {
-        require(whId >= 0);
+        Warehouse storage warehouse = warehouses[whId];
 
-        return warehouses[whId].items;
+        require(warehouse.maxCapacity > 0);
+
+        return warehouse.items;
     }
 }

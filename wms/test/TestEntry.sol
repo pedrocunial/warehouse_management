@@ -6,30 +6,45 @@ import '../contracts/Entry.sol';
 
 contract TestEntry {
     Entry entry = Entry(DeployedAddresses.Entry());
-    uint whId = 7;
+    uint constant whId = 7;
     address expectedItem = address(this);
 
-    function beforeAll() {
-        for (uint i = 0; i < 10; i++) {
-            entry.createWarehouse(30, 'Some street');
-        }
+    function beforeEach() public {
+        entry.createWarehouse(whId, 30, true);
     }
 
-    function testWhCanGetEntry() public {
-        uint retId = entry.addNew(whId);
-        Assert.equal(retId, whId,
-                     'Adição retornada deveria ser a mesma da enviada');
+    function testCreateWarehouse() public {
+        uint expectedId = 42;
+        uint createdId = entry.createWarehouse(expectedId, 42, true);
+
+        Assert.equal(createdId, expectedId,
+                     'ID criado deveria ser o mesmo do esperado');
+    }
+
+    function testCanAddNewItem() public {
+        address item0 = entry.addItem(whId);
+        Assert.equal(item0, expectedItem,
+                     'Item adicionado deveria ser o mesmo do esperado');
+
+        address item1 = entry.addItem(whId);  // add same item twice
+
+        Assert.equal(item1, expectedItem,
+                     'Item deveria poder ser adicionado mais de uma vez');
     }
 
     function testGetItemByWhId() public {
-        address item = entry.warehouses(whId);
-        Assert.equal(item, expectedItem,
-                     'Item adicionado deveria ser este contrato');
-    }
+        address item = entry.addItem(whId);
+        address[] memory items = entry.getWarehouseItems(whId);
 
-    function testGetWhAddressByItemId() public {
-        address[16] memory items = entry.getWarehouses();
-        Assert.equal(items[whId], expectedItem,
-                     'Item do armazem deveria ser o mesmo deste contrato');
+        bool contains = false;
+        uint itemsLength = items.length;
+        for (uint i = 0; i < itemsLength; i++) {
+            if (items[i] == item) {
+                contains = true;
+                break;
+            }
+        }
+
+        Assert.isTrue(contains, 'Item adicionado deveria ser este contrato');
     }
 }
