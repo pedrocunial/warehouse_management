@@ -5,11 +5,17 @@ contract Entry {
     struct Warehouse {
         uint maxCapacity;
         uint itemsCount;
-        address[] items;
+        uint[] itemIds;
+    }
+
+    struct Item {
+        uint price;
+        address owner;
     }
 
     // id -> struct
     mapping(uint => Warehouse) warehouses;
+    mapping(uint => Item) items;
 
     function createWarehouse(
             uint whId,
@@ -22,29 +28,53 @@ contract Entry {
         require(warehouses[whId].maxCapacity == 0 || forceRecreate);
 
         warehouses[whId] = Warehouse(maxCapacity, 0,
-                                     new address[](maxCapacity));
+                                     new uint[](maxCapacity));
         return whId;
     }
 
-    function addItem(uint whId) public returns (address) {
+    function addItem(
+        uint whId,
+        uint itemId,
+        uint itemPrice,
+        bool forceRecreate
+    )
+        public
+        returns (uint)
+    {
         Warehouse storage warehouse = warehouses[whId];
         require(warehouse.maxCapacity > 0 &&
                 warehouse.itemsCount < warehouse.maxCapacity);
 
-        warehouse.items[warehouse.itemsCount] = msg.sender;
+        if (items[itemId].owner == address(0) || forceRecreate) {
+            items[itemId] = Item(itemPrice, msg.sender);
+        }
+
+        warehouse.itemIds[warehouse.itemsCount] = itemId;
         warehouse.itemsCount++;
-        return warehouse.items[warehouse.itemsCount - 1];
+        return itemId;
+    }
+
+    function getItemPrice(uint itemId) public view returns (uint) {
+        require(items[itemId].owner != address(0));
+
+        return items[itemId].price;
+    }
+
+    function getItemOwner(uint itemId) public view returns (address) {
+        require(items[itemId].owner != address(0));
+
+        return items[itemId].owner;
     }
 
     function getWarehouseItems(uint whId)
         public
         view
-        returns (address[] memory)
+        returns (uint[] memory)
     {
         Warehouse storage warehouse = warehouses[whId];
 
         require(warehouse.maxCapacity > 0);
 
-        return warehouse.items;
+        return warehouse.itemIds;
     }
 }

@@ -7,7 +7,8 @@ import '../contracts/Entry.sol';
 contract TestEntry {
     Entry entry = Entry(DeployedAddresses.Entry());
     uint constant whId = 7;
-    address expectedItem = address(this);
+    uint constant itemId = 42;
+    address expectedOwner = address(this);
 
     function beforeEach() public {
         entry.createWarehouse(whId, 30, true);
@@ -22,19 +23,20 @@ contract TestEntry {
     }
 
     function testCanAddNewItem() public {
-        address item0 = entry.addItem(whId);
-        Assert.equal(item0, expectedItem,
+        uint item0 = entry.addItem(whId, itemId, 42, false);
+        Assert.equal(item0, itemId,
                      'Item adicionado deveria ser o mesmo do esperado');
 
-        address item1 = entry.addItem(whId);  // add same item twice
+        // add same item twice
+        uint item1 = entry.addItem(whId, itemId, 42, false);
 
-        Assert.equal(item1, expectedItem,
+        Assert.equal(item1, itemId,
                      'Item deveria poder ser adicionado mais de uma vez');
     }
 
     function testGetItemByWhId() public {
-        address item = entry.addItem(whId);
-        address[] memory items = entry.getWarehouseItems(whId);
+        uint item = entry.addItem(whId, itemId, 42, true);
+        uint[] memory items = entry.getWarehouseItems(whId);
 
         bool contains = false;
         uint itemsLength = items.length;
@@ -46,5 +48,15 @@ contract TestEntry {
         }
 
         Assert.isTrue(contains, 'Item adicionado deveria ser este contrato');
+    }
+
+    function testGetItemDetails() public {
+        entry.addItem(whId, itemId, 42, true);
+        uint price = entry.getItemPrice(itemId);
+        address owner = entry.getItemOwner(itemId);
+
+        Assert.equal(price, 42, 'O preço encontrado deveria ser o mesmo');
+        Assert.equal(owner, expectedOwner,
+                     'O criador do item deveria ser esta instancia');
     }
 }
