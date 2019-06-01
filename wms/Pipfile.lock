@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8d628050f00b256624725b94ce340da332cf6141fcb3fcda51d736b09de6a8d1"
+            "sha256": "564f8dbc85ae6acf1bfa2a8bed9222c3ec196e2713874fdf4bf4d8873df78281"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -118,14 +118,6 @@
             "index": "pypi",
             "version": "==1.0.3"
         },
-        "flask-marshmallow": {
-            "hashes": [
-                "sha256:4f507f883838b397638a3a36c7d36ee146b255a49db952f5d9de3f6f4522e8a8",
-                "sha256:69e99e3a123393894884a032ae2d11e6bdf4519a505819b66cec7eda32057741"
-            ],
-            "index": "pypi",
-            "version": "==0.10.1"
-        },
         "hexbytes": {
             "hashes": [
                 "sha256:27cc227ae95fc20d44325ac0329a0293d656a05230da079650705030c7d7a819",
@@ -198,6 +190,7 @@
                 "sha256:0e497a6447ffaad55578138ca512752de7a48d12f444996ededc3d6bf8a09ca2",
                 "sha256:e21a4dea20deb167c723e0ffb13f4cf33bcbbeb8a334e92406a3308cedea2826"
             ],
+            "index": "pypi",
             "version": "==2.19.2"
         },
         "parsimonious": {
