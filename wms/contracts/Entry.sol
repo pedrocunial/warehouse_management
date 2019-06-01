@@ -77,4 +77,53 @@ contract Entry {
 
         return warehouse.itemIds;
     }
+
+    function moveWarehouseItem(
+        uint itemId,
+        uint fromWhId,
+        uint toWhId
+    )
+        public
+        returns (address)
+    {
+        require(items[itemId].owner != address(0));
+
+        bool contains = false;
+        uint[] memory whItems = getWarehouseItems(fromWhId);
+        for (uint i = 0; i < whItems.length; i++) {
+            if (whItems[i] == itemId) {
+                contains = true;
+                break;
+            }
+        }
+        // contained in origin WH
+        require(contains);
+
+        contains = false;
+        whItems = getWarehouseItems(toWhId);
+        for (uint i = 0; i < whItems.length; i++) {
+            if (whItems[i] == itemId) {
+                contains = true;
+                break;
+            }
+        }
+        // not contained in dest WH
+        require(!contains);
+
+        // delete item from origin WH
+        Warehouse storage fromWh = warehouses[fromWhId];
+        uint itemLength = fromWh.itemIds.length;
+        for (uint i = 0; i < itemLength; i++) {
+            if (fromWh.itemIds[i] == itemId) {
+                delete fromWh.itemIds[i];
+                break;
+            }
+        }
+
+        // add item to dest WH
+        uint addedId = addItem(toWhId, itemId, 0, false);
+        require(addedId == itemId);
+
+        return items[itemId].owner;
+    }
 }
