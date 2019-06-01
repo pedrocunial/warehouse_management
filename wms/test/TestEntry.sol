@@ -59,4 +59,15 @@ contract TestEntry {
         Assert.equal(owner, expectedOwner,
                      'O criador do item deveria ser esta instancia');
     }
+
+    function testMoveItem() public {
+        uint destWdId = entry.createWarehouse(whId + 1, 42, true);
+        entry.addItem(whId, itemId, 42, true);  // add item to orig WH
+        entry.moveWarehouseItem(itemId, whId, destWdId);
+
+        Assert.isTrue(entry.whContainsItem(destWdId, itemId),
+                      'O item deveria ter sido movido para o segundo armazem');
+        Assert.isFalse(entry.whContainsItem(whId, itemId),
+                      'O item deveria ter sido movido para o segundo armazem');
+    }
 }

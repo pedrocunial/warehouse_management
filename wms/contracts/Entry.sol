@@ -78,6 +78,20 @@ contract Entry {
         return warehouse.itemIds;
     }
 
+    function whContainsItem(uint whId, uint itemId) public view returns (bool) {
+        require(items[itemId].owner != address(0));
+
+        bool contains = false;
+        uint[] memory whItems = getWarehouseItems(whId);
+        for (uint i = 0; i < whItems.length; i++) {
+            if (whItems[i] == itemId) {
+                contains = true;
+                break;
+            }
+        }
+        return contains;
+    }
+
     function moveWarehouseItem(
         uint itemId,
         uint fromWhId,
