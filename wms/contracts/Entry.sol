@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.0;
 
 contract Entry {
 
@@ -102,9 +102,10 @@ contract Entry {
     {
         require(items[itemId].owner != address(0));
 
+        uint i = 0;
         bool contains = false;
         uint[] memory whItems = getWarehouseItems(fromWhId);
-        for (uint i = 0; i < whItems.length; i++) {
+        for (i = 0; i < whItems.length; i++) {
             if (whItems[i] == itemId) {
                 contains = true;
                 break;
@@ -115,7 +116,7 @@ contract Entry {
 
         contains = false;
         whItems = getWarehouseItems(toWhId);
-        for (uint i = 0; i < whItems.length; i++) {
+        for (i = 0; i < whItems.length; i++) {
             if (whItems[i] == itemId) {
                 contains = true;
                 break;
@@ -127,7 +128,7 @@ contract Entry {
         // delete item from origin WH
         Warehouse storage fromWh = warehouses[fromWhId];
         uint itemLength = fromWh.itemIds.length;
-        for (uint i = 0; i < itemLength; i++) {
+        for (i = 0; i < itemLength; i++) {
             if (fromWh.itemIds[i] == itemId) {
                 delete fromWh.itemIds[i];
                 break;
